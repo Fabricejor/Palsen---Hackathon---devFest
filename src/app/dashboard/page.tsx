@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import {
   Bell,
   ChevronDown,
@@ -27,6 +28,13 @@ import {
   CartesianGrid,
   LineChart,
 } from "recharts";
+import dynamic from "next/dynamic";
+import { motion } from "framer-motion";
+
+const SenegalMap = dynamic(
+  () => import("@/components/dashboard/SenegalMap"),
+  { ssr: false }
+);
 
 const Header = () => {
   return (
@@ -127,11 +135,7 @@ const MapChart = () => {
   return (
     <div className="h-[400px] w-full rounded-lg bg-white p-4 shadow-sm">
       <h3 className="font-bold">Carte des risques - Sénégal</h3>
-      <div className="flex h-full items-center justify-center rounded-md bg-gray-100">
-        <p className="text-gray-500">
-          [L'implémentation de la carte dynamique viendra ici]
-        </p>
-      </div>
+      <SenegalMap />
     </div>
   );
 };
@@ -192,29 +196,53 @@ const ActiveAlerts = () => {
   );
 };
 
-const data = [
-  { name: "Jan", cas: 100, prediction: 105, seuil: 120 },
-  { name: "Feb", cas: 110, prediction: 115, seuil: 130 },
-  { name: "Mar", cas: 120, prediction: 125, seuil: 140 },
-  { name: "Apr", cas: 130, prediction: 135, seuil: 150 },
-  { name: "May", cas: 140, prediction: 145, seuil: 160 },
-  { name: "Jun", cas: 150, prediction: 155, seuil: 170 },
-  { name: "Jul", cas: 160, prediction: 165, seuil: 180 },
-  { name: "Aug", cas: 170, prediction: 175, seuil: 190 },
-  { name: "Sep", cas: 180, prediction: 185, seuil: 200 },
-  { name: "Oct", cas: 190, prediction: 195, seuil: 210 },
-  { name: "Nov", cas: 200, prediction: 205, seuil: 220 },
-  { name: "Dec", cas: 210, prediction: 215, seuil: 230 },
-];
+// Fonction pour générer des données randomisées réalistes
+const generateRandomData = () => {
+  const months = ["Jan", "Fév", "Mar", "Avr", "Mai", "Jun", "Jul", "Aoû", "Sep", "Oct", "Nov", "Déc"];
+  let prevCas = Math.floor(Math.random() * 50) + 80; // Entre 80 et 130
+  
+  return months.map((month) => {
+    // Variation aléatoire entre -20 et +30 pour simuler des fluctuations réalistes
+    const variation = Math.floor(Math.random() * 50) - 20;
+    const cas = Math.max(50, prevCas + variation); // Minimum 50 cas
+    
+    // Prédiction légèrement supérieure avec une petite variation
+    const prediction = cas + Math.floor(Math.random() * 20) + 5;
+    
+    // Seuil toujours au-dessus de la prédiction
+    const seuil = prediction + Math.floor(Math.random() * 30) + 20;
+    
+    prevCas = cas;
+    
+    return {
+      name: month,
+      cas: cas,
+      prediction: prediction,
+      seuil: seuil,
+    };
+  });
+};
+
+const data = generateRandomData();
 
 const TimeSeriesChart = () => {
   return (
     <div className="h-[400px] w-full rounded-lg bg-white p-6 shadow-sm">
-      <div className="flex items-center justify-between">
-        <h3 className="font-bold">Évolution temporelle des cas</h3>
-        {/* Add date range toggles here */}
+      <div className="flex items-center justify-between mb-2">
+        <div>
+          <h3 className="font-bold text-lg">Évolution des Cas</h3>
+          <p className="text-sm text-gray-500">Cas confirmés et prévisions sur 30 jours</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-gray-50">
+            <span>CSV</span>
+          </button>
+          <button className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-gray-50">
+            <span>PDF</span>
+          </button>
+        </div>
       </div>
-      <ResponsiveContainer width="100%" height="90%">
+      <ResponsiveContainer width="100%" height="85%">
         <AreaChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
           <CartesianGrid strokeDasharray="3 3" vertical={false} />
           <XAxis dataKey="name" />
@@ -250,11 +278,138 @@ const TimeSeriesChart = () => {
   );
 };
 
+// Données pour le heatmap des stocks
+const stockData = [
+  {
+    category: "Matériel médical",
+    values: [70, 35, 95, 60, 85, 25],
+  },
+  {
+    category: "Vaccins",
+    values: [90, 60, 85, 75, 90, 50],
+  },
+  {
+    category: "Antibiotiques",
+    values: [45, 80, 90, 55, 65, 40],
+  },
+  {
+    category: "Antipaludiques",
+    values: [85, 25, 70, 40, 80, 30],
+  },
+];
+
+const districts = ["Dakar", "Thiès", "Kaolack", "Saint-Louis", "Ziguinchor", "Tambacounda"];
+
+const StockLevelsChart = () => {
+  const getColor = (value: number) => {
+    if (value >= 75) return "bg-green-500";
+    if (value >= 50) return "bg-emerald-500";
+    if (value >= 25) return "bg-yellow-500";
+    return "bg-orange-500";
+  };
+
+  return (
+    <div className="h-[400px] w-full rounded-lg bg-white p-6 shadow-sm">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <h3 className="font-bold text-lg">Niveaux de Stock</h3>
+          <p className="text-sm text-gray-500">Par district et type de médicament</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-gray-50">
+            <span>CSV</span>
+          </button>
+          <button className="flex items-center gap-2 rounded-md border px-3 py-1.5 text-xs hover:bg-gray-50">
+            <span>PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="mt-4">
+        {/* Grid container */}
+        <div className="grid grid-cols-[200px_repeat(6,1fr)] gap-1">
+          {/* Header - empty cell */}
+          <div></div>
+          {/* District headers */}
+          {districts.map((district) => (
+            <div key={district} className="text-center text-sm font-medium text-gray-600 pb-2">
+              <div className="-rotate-45 origin-center whitespace-nowrap">{district}</div>
+            </div>
+          ))}
+
+          {/* Data rows */}
+          {stockData.map((row, rowIndex) => (
+            <React.Fragment key={rowIndex}>
+              {/* Category label */}
+              <div className="flex items-center text-sm font-medium text-gray-700 pr-4">
+                {row.category}
+              </div>
+              {/* Value cells */}
+              {row.values.map((value, colIndex) => (
+                <div
+                  key={colIndex}
+                  className={`${getColor(value)} flex items-center justify-center text-white font-semibold text-sm h-16 rounded`}
+                >
+                  {value}%
+                </div>
+              ))}
+            </React.Fragment>
+          ))}
+        </div>
+
+        {/* Legend */}
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <div className="flex items-center gap-2">
+            <div className="flex items-center">
+              <div className="w-12 h-4 bg-orange-500 rounded-l"></div>
+              <div className="w-12 h-4 bg-yellow-500"></div>
+              <div className="w-12 h-4 bg-emerald-500"></div>
+              <div className="w-12 h-4 bg-green-500 rounded-r"></div>
+            </div>
+            <div className="flex gap-8 text-xs text-gray-600">
+              <span>0</span>
+              <span>25</span>
+              <span>50</span>
+              <span>75</span>
+              <span>100</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const containerVariants = {
+  hidden: { opacity: 0 },
+  show: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.1,
+    },
+  },
+};
+
+const itemVariants = {
+  hidden: { y: 20, opacity: 0 },
+  show: { y: 0, opacity: 1 },
+};
+
 const DashboardPage = () => {
   return (
-    <div className="space-y-6">
-      <Header />
-      <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4">
+    <motion.div
+      className="space-y-6"
+      variants={containerVariants}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={itemVariants}>
+        <Header />
+      </motion.div>
+      <motion.div
+        className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4"
+        variants={itemVariants}
+      >
         <StatsCard
           title="Taux d'incidence (/1000)"
           value="12.4"
@@ -288,18 +443,33 @@ const DashboardPage = () => {
           icon={Users}
           iconColor="bg-green-500"
         />
-      </div>
-      <Filters />
-      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2">
+      </motion.div>
+      <motion.div variants={itemVariants}>
+        <Filters />
+      </motion.div>
+      <motion.div
+        className="grid grid-cols-1 gap-6 lg:grid-cols-3"
+        variants={itemVariants}
+      >
+        <motion.div className="lg:col-span-2" variants={itemVariants}>
           <MapChart />
-        </div>
-        <div>
+        </motion.div>
+        <motion.div variants={itemVariants}>
           <ActiveAlerts />
-        </div>
-      </div>
-      <TimeSeriesChart />
-    </div>
+        </motion.div>
+      </motion.div>
+      <motion.div
+        className="grid grid-cols-1 gap-6 lg:grid-cols-2"
+        variants={itemVariants}
+      >
+      <motion.div variants={itemVariants}>
+        <TimeSeriesChart />
+        </motion.div>
+        <motion.div variants={itemVariants}>
+          <StockLevelsChart />
+        </motion.div>
+      </motion.div>
+    </motion.div>
   );
 };
 
