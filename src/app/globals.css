@@ -7,7 +7,8 @@
    --primaire: #007B5E;          /* Vert forêt Sénégal - principal */
    --secondaire: #E8B10D;        /* Or sablonneux - accents et survols */
    --accent: #D32F2F;            /* Rouge vif - alertes et highlights */
- 
+    --wave1:#0B5EAF;
+    
    /* === Couleurs neutres === */
    --neutre-clair: #F9FAFB;      /* Fond général */
    --neutre-fonce: #1E293B;      /* Texte principal */
@@ -50,4 +51,37 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.wave-bg {
+  background: linear-gradient(-45deg, var(--primaire), var(--wave1), var(--primaire), var(--wave1));
+  background-size: 400% 400%;
+  animation: gradient 5s ease infinite;
+}
+
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-fade-in {
+  animation: fadeIn 0.8s ease-out forwards;
 }
