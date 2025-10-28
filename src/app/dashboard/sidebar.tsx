@@ -13,6 +13,7 @@ import {
   Bell,
   Settings,
   LogOut,
+  Users,
 } from "lucide-react";
 
 const navLinks = [
@@ -21,7 +22,7 @@ const navLinks = [
   { name: "Logistique", icon: Truck, href: "/dashboard/logistique" },
   { name: "Qualité", icon: ShieldCheck, href: "/dashboard/quality" },
   { name: "Alertes", icon: Bell, href: "/dashboard/alerts" },
-  { name: "Administration", icon: Settings, href: "/dashboard/admin" },
+  { name: "Administration", icon: Users, href: "/dashboard/utilisateurs" },
 ];
 
 const Sidebar = () => {
