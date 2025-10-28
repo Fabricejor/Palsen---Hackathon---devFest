@@ -3,6 +3,38 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+   /* === Couleurs principales === */
+   --primaire: #007B5E;          /* Vert forêt Sénégal - principal */
+   --secondaire: #E8B10D;        /* Or sablonneux - accents et survols */
+   --accent: #D32F2F;            /* Rouge vif - alertes et highlights */
+ 
+   /* === Couleurs neutres === */
+   --neutre-clair: #F9FAFB;      /* Fond général */
+   --neutre-fonce: #1E293B;      /* Texte principal */
+   --gris-moyen: #CBD5E1;        /* Bordures, séparateurs */
+ 
+   /* === États et statuts === */
+   --succes: #00A676;            /* Actions réussies, validation */
+   --alerte: #FFB020;            /* Risque moyen ou attention */
+   --danger: #E53E3E;            /* Risque élevé, erreur */
+ 
+   /* === Couleurs contextuelles === */
+   --fond-carte: #E3F2F1;        /* Fond des cartes / cartes géographiques */
+   --ombre-carte: rgba(0, 0, 0, 0.08); /* Légère ombre douce */
+   --fond-popover: #FFFFFF;      /* Popups, modals */
+   --bordure-popover: #E2E8F0;   /* Bordures légères */
+ 
+   /* === Typographie === */
+   --texte-principal: var(--neutre-fonce);
+   --texte-secondaire: #475569;
+   --texte-inverse: #FFFFFF;
+ 
+   /* === Composants === */
+   --fond-bouton-primaire: var(--primaire);
+   --fond-bouton-secondaire: var(--secondaire);
+   --fond-bouton-desactive: #E2E8F0;
+   --texte-bouton: #FFFFFF;
+   --texte-bouton-desactive: #94A3B8
 }
 
 @theme inline {
@@ -12,12 +44,7 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+
 
 body {
   background: var(--background);
